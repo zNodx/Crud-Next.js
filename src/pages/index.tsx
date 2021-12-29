@@ -1,38 +1,50 @@
+import { useEffect, useState } from "react";
+import ColecaoCliente from "../backend/db/ColecaoCliente";
 import Botao from "../components/Botao";
 import Formulario from "../components/Formulario";
 import Layout from "../components/Layout";
 import Tabela from "../components/Tabela";
 import Cliente from "../core/Cliente";
+import ClienteRepositorio from "../core/ClienteRepositorio";
+import useClientes from "../hooks/useClientes";
 
 export default function Home() {
-  const clientes = [
-    new Cliente('Ana',34,'1'),
-    new Cliente('Bia',24,'2'),
-    new Cliente('Carlos',14,'3'),
-    new Cliente('Daniel',44,'4'), 
-
-  ]
-
-  function clienteSelecionado(clientes:Cliente){
-      console.log(clientes.nome)
-  }
-  function clienteExcluido (clientes:Cliente){
-    console.log(`Excluir:${clientes.nome}`)
-}
+  
+  const {
+        selecionarCliente,
+        excluirCliente, 
+        novoCliente,
+        cliente,
+        clientes,
+        exibirTabela,
+        salvarCliente,
+        tabelaVisivel,
+      } = useClientes()
 
   return (
+   
     <div className={`
+    bg-gradient-to-r from-red-600 via-orange-500 to-yellow-600
     flex h-screen justify-center items-center
-    bg-gradient-to-r from-red-500 to-yellow-500
     `}>
       <Layout titulo="Cadastro Simples">
+        {tabelaVisivel ? (
+        <>
         <div className="flex justify-end">
-          <Botao cor='orange' className="mb-4" >Novo Cliente</Botao>
+          <Botao onClick={novoCliente} className="mb-4 bg-gradient-to-r from-red-400 to-red-800">Novo Cliente</Botao>
         </div>
         <Tabela clientes={clientes} 
-        clienteSelecionado={clienteSelecionado}
-        clienteExcluido={clienteExcluido}/>
-        <Formulario clientes={clientes[1]}/>
+        clienteSelecionado={selecionarCliente}
+        clienteExcluido={excluirCliente}/>
+        </>
+
+        ): (
+          <Formulario 
+              clientes={cliente}
+              clienteMudou={salvarCliente}
+              cancelado={() => exibirTabela}
+          />
+        )}
       </Layout>
     </div>
   )
